@@ -10,25 +10,29 @@ class Downloader
     {
         $exception = null;
 
+        $options = [
+            "ssl" => [
+                "verify_peer"      => false,
+                "verify_peer_name" => false,
+            ],
+        ];
+
+        $decodedSource = urldecode($source);
+        $decodedDestination = urldecode($destination);
+
         try {
 
-            $options = [
-                "ssl" => [
-                    "verify_peer"      => false,
-                    "verify_peer_name" => false,
-                ],
-            ];
+            if ($sourceHandle = fopen($decodedSource, 'rb', null, stream_context_create($options))) {
 
-            $content = file_get_contents(urldecode($source), false, stream_context_create($options));
+                $downloaded = false;
 
-            if (!empty($content)) {
-
-                $writeResult = file_put_contents(urldecode($destination), $content, LOCK_EX);
-
-                if ($writeResult !== false) {
-                    return true;
+                if (file_put_contents($decodedDestination, $sourceHandle, LOCK_EX) !== false) {
+                    $downloaded = true;
                 }
 
+                fclose($sourceHandle);
+
+                return $downloaded;
             }
         }
         catch (\Exception $e) {

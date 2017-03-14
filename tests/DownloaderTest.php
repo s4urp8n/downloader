@@ -6,6 +6,7 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
     use \Zver\Package\Test;
 
     protected static $files = [
+        "http://releases.ubuntu.com/16.04.2/ubuntu-16.04.2-desktop-amd64.iso",
         "https://www.lacisoft.com/blog/wp-content/uploads/2012/01/php2-642x350.png",
         "http://cdn.freebiesbug.com/wp-content/uploads/2017/03/cheque-11-580x591.jpg",
         "ftp://ftp.dlink.ru/pub/Software/ADSL_QIGs.rar",
@@ -16,6 +17,10 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
     ];
 
     protected static $badFiles = [
+        "",
+        "http://",
+        "_______239fdjw8e9fjwefewfwef",
+        "d23dsdf3f23f23f",
         "https://www.lacisoft.com/blog/wp-content/uploads/2012/01/php22321342-642x350.png",
         "http://cdn.freebiesbug.com/wp-content/uploads/2017/03/cheq22423efsdf3ue-11-580x591.jpg",
         "ftp://ftp.dlink.ru/pub/Software/ADSL_QI324sfsdfsdfGs.rar",
