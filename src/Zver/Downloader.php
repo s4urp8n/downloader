@@ -26,6 +26,8 @@ class Downloader
 
                 $downloaded = false;
 
+                @mkdir(dirname($decodedDestination), 0777, true);
+
                 if (file_put_contents($decodedDestination, $sourceHandle, LOCK_EX) !== false) {
                     $downloaded = true;
                 }
