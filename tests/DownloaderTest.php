@@ -22,7 +22,6 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
         "ftp://demo:password@test.rebex.net/pub/example/FtpDownloader.png",
         "ftp://demo:password@test.rebex.net:21/pub/example/FtpDownloader.png",
         "ftp://ftp.dlink.ru/pub/Software/autoupdate/pub/Router/DIR-300A_C1/Firmware/20130304_0812_DIR_300A_0.0.2_sdk-master.bin",
-        "http://releases.ubuntu.com/16.04.2/ubuntu-16.04.2-desktop-amd64.iso",
     ];
 
     protected static $badFiles = [
