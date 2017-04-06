@@ -1,10 +1,20 @@
 <?php
+
 namespace Zver;
 
 use Zver\Common;
 
 class Downloader
 {
+
+    public static function isWGETInstalled()
+    {
+        $output = Common::executeInSystem('wget --version');
+
+        $pattern = '#wget\s+\d+\.\d+#i';
+
+        return (preg_match($pattern, $output) === 1);
+    }
 
     protected static function downloadHttp($source, $destination, $connectionTimeout, $parsed)
     {
@@ -64,25 +74,56 @@ class Downloader
         return false;
     }
 
-    public static function download($source, $destination, $connectionTimeout = 300)
+    public static function download($source, $destination, $connectionTimeout = 300, $wgetOnlyMaxTries = 5)
     {
 
         ini_set('default_socket_timeout', (float)$connectionTimeout);
 
         $directory = dirname(urldecode($destination));
 
-        @mkdir($directory, 0777, true);
-
         $parsed = parse_url($source);
 
         if ($parsed !== false && isset($parsed['scheme']) && isset($parsed['host'])) {
 
+            @mkdir($directory, 0777, true);
+
             $decodedSource = urldecode($source);
             $decodedDestination = urldecode($destination);
 
-            return in_array($parsed['scheme'], ['ftp', 'ftps'])
-                ? static::downloadFtp($decodedSource, $decodedDestination, $connectionTimeout, $parsed)
-                : static::downloadHttp($decodedSource, $decodedDestination, $connectionTimeout, $parsed);
+            if (static::isWGETInstalled()) {
+
+                $isDir = false;
+                try {
+                    $isDir = is_dir($decodedSource);
+                }
+                catch (\Exception $e) {
+                    $isDir = true;
+                }
+
+                if (!$isDir) {
+
+                    $exitCode = $output = '';
+
+                    $wgetCommand = sprintf('wget --quiet --tries=%d -O "%s" "%s"', $wgetOnlyMaxTries, $decodedDestination, $decodedSource);
+
+                    ob_start();
+                    @exec($wgetCommand, $output, $exitCode);
+                    ob_get_clean();
+
+                    $downloaded = ($exitCode == 0);
+
+                    if (!$downloaded) {
+                        @unlink($decodedDestination);
+                    }
+
+                    return $downloaded;
+                }
+
+            } else {
+                return in_array($parsed['scheme'], ['ftp', 'ftps'])
+                    ? static::downloadFtp($decodedSource, $decodedDestination, $connectionTimeout, $parsed)
+                    : static::downloadHttp($decodedSource, $decodedDestination, $connectionTimeout, $parsed);
+            }
 
         }
 

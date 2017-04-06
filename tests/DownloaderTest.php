@@ -22,12 +22,12 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
         "ftp://demo:password@test.rebex.net/pub/example/FtpDownloader.png",
         "ftp://demo:password@test.rebex.net:21/pub/example/FtpDownloader.png",
         "ftp://ftp.dlink.ru/pub/Software/autoupdate/pub/Router/DIR-300A_C1/Firmware/20130304_0812_DIR_300A_0.0.2_sdk-master.bin",
+//        "ftp://speedtest.tele2.net/1GB.zip",
     ];
 
     protected static $badFiles = [
         "ftps://de231dqwdqdmo:passwo12asdsadrd@test.rebex.net:21/readme.txt",
         "",
-        "ftp://ftp.dlink.ru/pub/Software/",
         "http://",
         "_______239fdjw8e9fjwefewfwef",
         "d23dsdf3f23f23f",
@@ -38,6 +38,7 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
         "ftp://ftp.dlink.ru/pub/Software/D-View 6.0 Service Pack 3 (SP3) 623423rwsdfsdf.00.03B19.exe",
         "ftp://ftp.dlink.ru/pub/Software/DLinkTftpSe23sd2223dffdhrthrver.exe",
         "ftp://ftp.dlink.ru/pub/Software/autoupdate/pub/Router/DIR-300A_C1/Firmw2543435345324431asasasdare/20130304_0812_DIR_300A_0.0.2_sdk-master.bin",
+        "ftp://ftp.dlink.ru/pub/Software/",
     ];
 
     public static function setUpBeforeClass()
