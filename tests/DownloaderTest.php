@@ -3,7 +3,7 @@
 class DownloaderTest extends PHPUnit\Framework\TestCase
 {
 
-    use \Zver\Package\Test;
+    use \Zver\Package\Helper;
 
     protected static $files = [
         "https://www.lacisoft.com/blog/wp-content/uploads/2012/01/php2-642x350.png",
