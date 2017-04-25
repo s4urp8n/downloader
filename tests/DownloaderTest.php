@@ -5,23 +5,15 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
 
     use \Zver\Package\Helper;
 
+    protected static $timeout = 300;
+
     protected static $files = [
         "https://www.lacisoft.com/blog/wp-content/uploads/2012/01/php2-642x350.png",
         "http://cdn.freebiesbug.com/wp-content/uploads/2017/03/cheque-11-580x591.jpg",
-        "ftp://anonymous:@ftp.dlink.ru:21/pub/Software/ADSL_QIGs.rar",
-        "ftp://ftp.support.acer-euro.com/Archiv/bluetooth/bt500/driver/bluetooth1327.zip",
-        "ftp://ftp.dlink.ru/pub/Software/D-View%206.0%20Service%20Pack%203%20%28SP3%29%206.00.03B19.exe",
-        "ftp://ftp.dlink.ru/pub/Software/D-View 6.0 Service Pack 3 (SP3) 6.00.03B19.exe",
-        "ftp://ftp.dlink.ru/pub/Software/DLinkTftpServer.exe",
         "ftp://speedtest.tele2.net/1KB.zip",
         "ftp://speedtest.tele2.net/2MB.zip",
         "ftp://speedtest.tele2.net/512KB.zip",
         "ftp://speedtest.tele2.net/5MB.zip",
-        "ftp://demo:password@test.rebex.net/readme.txt",
-        "ftp://demo:password@test.rebex.net:21/readme.txt",
-        "ftp://demo:password@test.rebex.net/pub/example/FtpDownloader.png",
-        "ftp://demo:password@test.rebex.net:21/pub/example/FtpDownloader.png",
-        "ftp://ftp.dlink.ru/pub/Software/autoupdate/pub/Router/DIR-300A_C1/Firmware/20130304_0812_DIR_300A_0.0.2_sdk-master.bin",
         "ftp://speedtest.tele2.net/1GB.zip",
     ];
 
@@ -58,7 +50,9 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
     public function testDownloads()
     {
         foreach (static::$files as $file) {
-            $this->assertTrue(\Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file)));
+            $this->assertTrue(
+                \Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file), static::$timeout)
+            );
             $this->assertTrue(file_exists(__DIR__ . DIRECTORY_SEPARATOR . basename(urldecode($file))));
         }
 
@@ -74,7 +68,7 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
 
         $downloadName = '32dd3fwefsdfdsfdgsdxcnw3r8wef.exe';
 
-        $this->assertTrue(\Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . $downloadName));
+        $this->assertTrue(\Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . $downloadName, static::$timeout));
         $this->assertTrue(file_exists(__DIR__ . DIRECTORY_SEPARATOR . $downloadName));
 
         @unlink(__DIR__ . DIRECTORY_SEPARATOR . $downloadName);

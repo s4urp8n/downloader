@@ -2,8 +2,6 @@
 
 namespace Zver;
 
-use Zver\Common;
-
 class Downloader
 {
 
@@ -16,7 +14,7 @@ class Downloader
         return (preg_match($pattern, $output) === 1);
     }
 
-    public static function download($source, $destination, $maxTries = 5)
+    public static function download($source, $destination, $timeout = 30)
     {
 
         $directory = dirname(urldecode($destination));
@@ -33,6 +31,7 @@ class Downloader
             if (static::isWGETInstalled()) {
 
                 $isDir = false;
+
                 try {
                     $isDir = is_dir($decodedSource);
                 }
@@ -44,11 +43,9 @@ class Downloader
 
                     $exitCode = $output = '';
 
-                    $wgetCommand = sprintf('wget --quiet --tries=%d -O "%s" "%s"', $maxTries, $decodedDestination, $decodedSource);
+                    $wgetCommand = sprintf('wget --quiet -O "%s" "%s"', $decodedDestination, $decodedSource);
 
-                    ob_start();
-                    @exec($wgetCommand, $output, $exitCode);
-                    ob_get_clean();
+                    Common::executeInSystemWithTimeout($wgetCommand, $timeout, $output, $exitCode);
 
                     $downloaded = ($exitCode == 0);
 
