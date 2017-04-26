@@ -16,7 +16,7 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
     ];
 
     protected static $badFiles = [
-        "ftps://de231dqwdqdmo:passwo12asdsadrd@test.rebex.net:21/readme.txt",
+        "ftp://de231dqwdqdmo:passwo12asdsadrd@test.rebex.net:21/readme.txt",
         "",
         "http://",
         "_______239fdjw8e9fjwefewfwef",

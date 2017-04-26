@@ -43,7 +43,7 @@ class Downloader
 
                     $exitCode = $output = '';
 
-                    $command = sprintf('wget -O "%s" "%s"', $decodedDestination, $decodedSource);
+                    $command = sprintf('wget --quiet -O "%s" "%s"', $decodedDestination, $decodedSource);
 
                     @exec($command, $output, $exitCode);
 
