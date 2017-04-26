@@ -5,8 +5,6 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
 
     use \Zver\Package\Helper;
 
-    protected static $timeout = 300;
-
     protected static $files = [
         "https://www.lacisoft.com/blog/wp-content/uploads/2012/01/php2-642x350.png",
         "http://cdn.freebiesbug.com/wp-content/uploads/2017/03/cheque-11-580x591.jpg",
@@ -50,9 +48,7 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
     public function testDownloads()
     {
         foreach (static::$files as $file) {
-            $this->assertTrue(
-                \Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file), static::$timeout)
-            );
+            $this->assertTrue(\Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file)));
             $this->assertTrue(file_exists(__DIR__ . DIRECTORY_SEPARATOR . basename(urldecode($file))));
         }
 
@@ -68,7 +64,7 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
 
         $downloadName = '32dd3fwefsdfdsfdgsdxcnw3r8wef.exe';
 
-        $this->assertTrue(\Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . $downloadName, static::$timeout));
+        $this->assertTrue(\Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . $downloadName));
         $this->assertTrue(file_exists(__DIR__ . DIRECTORY_SEPARATOR . $downloadName));
 
         @unlink(__DIR__ . DIRECTORY_SEPARATOR . $downloadName);

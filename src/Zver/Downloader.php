@@ -14,7 +14,7 @@ class Downloader
         return (preg_match($pattern, $output) === 1);
     }
 
-    public static function download($source, $destination, $timeout = 30)
+    public static function download($source, $destination)
     {
 
         $directory = dirname(urldecode($destination));
@@ -43,9 +43,9 @@ class Downloader
 
                     $exitCode = $output = '';
 
-                    $wgetCommand = sprintf('wget --quiet -O "%s" "%s"', $decodedDestination, $decodedSource);
+                    $command = sprintf('wget -O "%s" "%s"', $decodedDestination, $decodedSource);
 
-                    Common::executeInSystemWithTimeout($wgetCommand, $timeout, $output, $exitCode);
+                    @exec($command, $output, $exitCode);
 
                     $downloaded = ($exitCode == 0);
 
