@@ -44,7 +44,6 @@ class Downloader
                 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
                 curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
                 curl_setopt($curl, CURLOPT_AUTOREFERER, true);
-                curl_setopt($curl, CURLOPT_BINARYTRANSFER, true);
                 curl_setopt($curl, CURLOPT_FAILONERROR, true);
 
                 curl_setopt($curl, CURLOPT_PROGRESSFUNCTION, function (
