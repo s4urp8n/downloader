@@ -5,16 +5,7 @@ namespace Zver;
 class Downloader
 {
 
-    public static function isWGETInstalled()
-    {
-        $output = Common::executeInSystem('wget --version');
-
-        $pattern = '#wget\s+\d+\.\d+#i';
-
-        return (preg_match($pattern, $output) === 1);
-    }
-
-    public static function download($source, $destination)
+    public static function download($source, $destination, $maxSizeInBytes = 0)
     {
 
         $directory = dirname(urldecode($destination));
@@ -28,33 +19,72 @@ class Downloader
             $decodedSource = urldecode($source);
             $decodedDestination = urldecode($destination);
 
-            if (static::isWGETInstalled()) {
+            $isDir = false;
 
-                $isDir = false;
+            try {
+                $isDir = is_dir($decodedSource);
+            }
+            catch (\Exception $e) {
+                $isDir = true;
+            }
 
-                try {
-                    $isDir = is_dir($decodedSource);
-                }
-                catch (\Exception $e) {
-                    $isDir = true;
-                }
+            if (!$isDir) {
 
-                if (!$isDir) {
+                $downloaded = true;
 
-                    $exitCode = $output = '';
+                $curl = curl_init(str_replace(" ", "%20", $decodedSource));
 
-                    $command = sprintf('wget --quiet -O "%s" "%s"', $decodedDestination, $decodedSource);
+                $fp = fopen($decodedDestination, 'w+');
 
-                    @exec($command, $output, $exitCode);
+                curl_setopt($curl, CURLOPT_TIMEOUT, 60);
+                curl_setopt($curl, CURLOPT_FILE, $fp);
+                curl_setopt($curl, CURLOPT_BUFFERSIZE, 1024);
+                curl_setopt($curl, CURLOPT_NOPROGRESS, false);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+                curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($curl, CURLOPT_AUTOREFERER, true);
+                curl_setopt($curl, CURLOPT_BINARYTRANSFER, true);
+                curl_setopt($curl, CURLOPT_FAILONERROR, true);
 
-                    $downloaded = ($exitCode == 0);
+                curl_setopt($curl, CURLOPT_PROGRESSFUNCTION, function (
+                    $totalDownloadedBytes,
+                    $downloadedBytes,
+                    $totalUploadedBytes,
+                    $uploadedBytes
+                ) use ($maxSizeInBytes, &$downloaded) {
 
-                    if (!$downloaded) {
-                        @unlink($decodedDestination);
+                    if ($maxSizeInBytes > 0 && $downloadedBytes > $maxSizeInBytes) {
+                        $downloaded = false;
+                        throw new \Exception('Max size reached');
                     }
 
-                    return $downloaded;
+                    return 0;
+
+                });
+
+                try {
+                    curl_exec($curl);
                 }
+                catch (\Throwable $e) {
+                    $downloaded = false;
+                }
+                catch (\Exception $e) {
+                    $downloaded = false;
+                }
+
+                @curl_close($curl);
+                @fclose($fp);
+
+                if ($downloaded && filesize($decodedDestination) == 0) {
+                    $downloaded = false;
+                }
+
+                if (!$downloaded) {
+                    @unlink($decodedDestination);
+                }
+
+                return $downloaded;
 
             }
 

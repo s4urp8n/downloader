@@ -7,10 +7,7 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
 
     protected static $files = [
         "https://www.lacisoft.com/blog/wp-content/uploads/2012/01/php2-642x350.png",
-        "http://cdn.freebiesbug.com/wp-content/uploads/2017/03/cheque-11-580x591.jpg",
-        "ftp://speedtest.tele2.net/1KB.zip",
         "ftp://speedtest.tele2.net/2MB.zip",
-        "ftp://speedtest.tele2.net/512KB.zip",
         "ftp://speedtest.tele2.net/5MB.zip",
         "ftp://speedtest.tele2.net/1GB.zip",
     ];
@@ -40,6 +37,37 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
         }
     }
 
+    public function testFileIsEquals()
+    {
+        $originalFile = __DIR__ . DIRECTORY_SEPARATOR . "files" . DIRECTORY_SEPARATOR . "php2-642x350.png";
+
+        $file = __DIR__ . DIRECTORY_SEPARATOR . basename($originalFile);
+
+        \Zver\Downloader::download(static::$files[0], $file);
+
+        $this->assertSame(
+            md5_file($originalFile),
+            md5_file($file)
+        );
+
+    }
+
+    public function testMaxSize()
+    {
+
+        foreach (static::$files as $file) {
+
+            $this->assertFalse(
+                \Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file), 2000)
+            );
+
+            $this->assertFalse(
+                file_exists(__DIR__ . DIRECTORY_SEPARATOR . basename(urldecode($file)))
+            );
+        }
+
+    }
+
     public static function tearDownAfterClass()
     {
         static::setUpBeforeClass();
@@ -48,12 +76,21 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
     public function testDownloads()
     {
         foreach (static::$files as $file) {
-            $this->assertTrue(\Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file)));
-            $this->assertTrue(file_exists(__DIR__ . DIRECTORY_SEPARATOR . basename(urldecode($file))));
+
+            $this->assertTrue(
+                \Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file))
+            );
+
+            $this->assertTrue(
+                file_exists(__DIR__ . DIRECTORY_SEPARATOR . basename(urldecode($file)))
+            );
         }
 
         foreach (static::$badFiles as $file) {
-            $this->assertFalse(\Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file)));
+            $this->assertFalse(
+                \Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file)),
+                'File [' . $file . '] downloaded but DONT!'
+            );
         }
 
     }
