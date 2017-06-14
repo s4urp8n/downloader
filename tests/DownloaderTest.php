@@ -46,8 +46,8 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
         \Zver\Downloader::download(static::$files[0], $file);
 
         $this->assertSame(
-            md5_file($originalFile),
-            md5_file($file)
+            file_get_contents($originalFile),
+            file_get_contents($file)
         );
 
     }

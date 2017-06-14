@@ -55,8 +55,10 @@ class Downloader
                 ) use ($maxSizeInBytes, &$downloaded) {
 
                     if ($maxSizeInBytes > 0 && $downloadedBytes > $maxSizeInBytes) {
+
                         $downloaded = false;
-                        throw new \Exception('Max size reached');
+
+                        return 1;
                     }
 
                     return 0;
