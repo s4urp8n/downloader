@@ -37,21 +37,6 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    public function testFileIsEquals()
-    {
-        $originalFile = __DIR__ . DIRECTORY_SEPARATOR . "files" . DIRECTORY_SEPARATOR . "php2-642x350.png";
-
-        $file = __DIR__ . DIRECTORY_SEPARATOR . basename($originalFile);
-
-        \Zver\Downloader::download(static::$files[0], $file);
-
-        $this->assertSame(
-            file_get_contents($originalFile),
-            file_get_contents($file)
-        );
-
-    }
-
     public function testMaxSize()
     {
 
