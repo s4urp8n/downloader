@@ -47,13 +47,24 @@ class Downloader
                 curl_setopt($curl, CURLOPT_FAILONERROR, true);
 
                 curl_setopt($curl, CURLOPT_PROGRESSFUNCTION, function (
+                    $resource,
                     $totalDownloadedBytes,
                     $downloadedBytes,
                     $totalUploadedBytes,
                     $uploadedBytes
                 ) use ($maxSizeInBytes, &$downloaded) {
 
-                    if ($maxSizeInBytes > 0 && $downloadedBytes > $maxSizeInBytes) {
+                    $info = curl_getinfo($resource);
+
+                    if (
+                        $maxSizeInBytes > 0
+                        &&
+                        (
+                            ($totalDownloadedBytes > $maxSizeInBytes)
+                            ||
+                            (!empty($info) && !empty($info['download_content_length']) && $info['download_content_length'] > $maxSizeInBytes)
+                        )
+                    ) {
 
                         $downloaded = false;
 

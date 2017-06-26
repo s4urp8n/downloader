@@ -5,6 +5,12 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
 
     use \Zver\Package\Helper;
 
+    /**
+     * PLEASE KEEP THIS ARRAY ORDERED FROM SMALL TO BIG
+     * SMALLER FIRST - BIGGER LAST
+     *
+     * @var array
+     */
     protected static $files = [
         "https://www.lacisoft.com/blog/wp-content/uploads/2012/01/php2-642x350.png",
         "ftp://speedtest.tele2.net/2MB.zip",
@@ -58,23 +64,35 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
         static::setUpBeforeClass();
     }
 
+    public function testFastDownloadBreak()
+    {
+        $bigFile = static::$files[count(static::$files) - 1];
+        $start = microtime(true);
+        $this->assertFalse(\Zver\Downloader::download($bigFile, __DIR__ . DIRECTORY_SEPARATOR . basename($bigFile), 500000000));
+        $duration = round(microtime(true) - $start);
+
+        $this->assertTrue($duration < 5, 'Download must interrupted in less that 5 sec, but it didn\'t happen');
+    }
+
     public function testDownloads()
     {
         foreach (static::$files as $file) {
 
             $this->assertTrue(
-                \Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file))
+                \Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file)),
+                'Can\'t download ' . $file
             );
 
             $this->assertTrue(
-                file_exists(__DIR__ . DIRECTORY_SEPARATOR . basename(urldecode($file)))
+                file_exists(__DIR__ . DIRECTORY_SEPARATOR . basename(urldecode($file))),
+                'File ' . $file . ' is not exists'
             );
         }
 
         foreach (static::$badFiles as $file) {
             $this->assertFalse(
                 \Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file)),
-                'File [' . $file . '] downloaded but DONT!'
+                'File [' . $file . '] downloaded but THIS IS ERROR!'
             );
         }
 
