@@ -12,10 +12,8 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
      * @var array
      */
     protected static $files = [
-        "https://www.lacisoft.com/blog/wp-content/uploads/2012/01/php2-642x350.png",
-        "ftp://speedtest.tele2.net/2MB.zip",
-        "ftp://speedtest.tele2.net/5MB.zip",
-        "ftp://speedtest.tele2.net/1GB.zip",
+        "https://speedtest.selectel.ru/10MB",
+        "https://speedtest.selectel.ru/100MB",
     ];
 
     protected static $badFiles = [
@@ -34,7 +32,7 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
         "ftp://ftp.dlink.ru/pub/Software/",
     ];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         foreach (static::$files as $file) {
             if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . basename(urldecode($file)))) {
@@ -43,35 +41,21 @@ class DownloaderTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    public function testMaxSize()
-    {
-
-        foreach (static::$files as $file) {
-
-            $this->assertFalse(
-                \Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file), 2000)
-            );
-
-            $this->assertFalse(
-                file_exists(__DIR__ . DIRECTORY_SEPARATOR . basename(urldecode($file)))
-            );
-        }
-
-    }
-
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         static::setUpBeforeClass();
     }
 
-    public function testFastDownloadBreak()
+    public function testMaxSize()
     {
-        $bigFile = static::$files[count(static::$files) - 1];
-        $start = microtime(true);
-        $this->assertFalse(\Zver\Downloader::download($bigFile, __DIR__ . DIRECTORY_SEPARATOR . basename($bigFile), 500000000));
-        $duration = round(microtime(true) - $start);
-
-        $this->assertTrue($duration < 5, 'Download must interrupted in less that 5 sec, but it didn\'t happen');
+        foreach (static::$files as $file) {
+            $this->assertFalse(
+                \Zver\Downloader::download($file, __DIR__ . DIRECTORY_SEPARATOR . basename($file), '5mb')
+            );
+            $this->assertFalse(
+                file_exists(__DIR__ . DIRECTORY_SEPARATOR . basename(urldecode($file)))
+            );
+        }
     }
 
     public function testDownloads()
