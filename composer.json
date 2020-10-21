@@ -1,7 +1,7 @@
 {
   "name": "zver/downloader",
   "description": "package to help download files from http, https, ftp",
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "config": {
     "optimize-autoloader": true
   },
@@ -19,7 +19,7 @@
     }
   },
   "require": {
-    "zver/common": "^3",
+    "zver/common": "dev-master",
     "phpunit/phpunit": "^8.5",
     "ext-curl": "*"
   },
