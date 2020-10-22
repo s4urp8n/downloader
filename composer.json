@@ -20,7 +20,7 @@
   },
   "require": {
     "zver/common": "dev-master",
-    "phpunit/phpunit": "^8.5",
+    "phpunit/phpunit": "*",
     "ext-curl": "*"
   },
   "require-dev": {
